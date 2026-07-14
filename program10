@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <sys/wait.h>
+
+struct message
+{
+    long type;
+    char text[100];
+};
+
+int main()
+{
+    int msgid;
+    struct message msg;
+
+    // Create message queue
+    msgid = msgget(IPC_PRIVATE, IPC_CREAT | 0666);
+
+    if(msgid < 0)
+    {
+        printf("Message queue creation failed\n");
+        return 1;
+    }
+
+    if(fork() == 0)
+    {
+        // Child Process
+        msgrcv(msgid, &msg, sizeof(msg.text), 1, 0);
+        printf("Child Process Received: %s\n", msg.text);
+    }
+    else
+    {
+        // Parent Process
+        msg.type = 1;
+        strcpy(msg.text, "Hello from Parent Process!");
+
+        msgsnd(msgid, &msg, sizeof(msg.text), 0);
+
+        printf("Parent Process Sent: %s\n", msg.text);
+
+        wait(NULL);
+
+        // Remove message queue
+        msgctl(msgid, IPC_RMID, NULL);
+    }
+
+    return 0;
+}
