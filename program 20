@@ -1,0 +1,87 @@
+#include <stdio.h>
+
+int mutex = 1;
+int wrt = 1;
+int readcount = 0;
+int data = 100;
+
+void wait(int *s)
+{
+    (*s)--;
+}
+
+void signal(int *s)
+{
+    (*s)++;
+}
+
+void reader(int id)
+{
+    wait(&mutex);
+    readcount++;
+
+    if(readcount == 1)
+        wait(&wrt);
+
+    signal(&mutex);
+
+    printf("Reader %d is reading data = %d\n", id, data);
+
+    wait(&mutex);
+    readcount--;
+
+    if(readcount == 0)
+        signal(&wrt);
+
+    signal(&mutex);
+}
+
+void writer(int id)
+{
+    wait(&wrt);
+
+    data += 10;
+    printf("Writer %d is writing data = %d\n", id, data);
+
+    signal(&wrt);
+}
+
+int main()
+{
+    int choice;
+
+    while(1)
+    {
+        printf("\n----- Reader-Writer Problem -----\n");
+        printf("1. Reader 1\n");
+        printf("2. Reader 2\n");
+        printf("3. Writer\n");
+        printf("4. Exit\n");
+
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch(choice)
+        {
+            case 1:
+                reader(1);
+                break;
+
+            case 2:
+                reader(2);
+                break;
+
+            case 3:
+                writer(1);
+                break;
+
+            case 4:
+                return 0;
+
+            default:
+                printf("Invalid Choice!\n");
+        }
+    }
+
+    return 0;
+}
