@@ -1,0 +1,52 @@
+#include <stdio.h>
+
+int main()
+{
+    float tlbTime, memoryTime, hitRatio;
+    float missRatio, eatWithoutTLB, eatWithTLB;
+
+    printf("Enter TLB access time (ns): ");
+    scanf("%f", &tlbTime);
+
+    printf("Enter Memory access time (ns): ");
+    scanf("%f", &memoryTime);
+
+    printf("Enter TLB hit ratio (0 to 1): ");
+    scanf("%f", &hitRatio);
+
+    if (hitRatio < 0 || hitRatio > 1)
+    {
+        printf("Invalid hit ratio.\n");
+        return 0;
+    }
+
+    missRatio = 1 - hitRatio;
+
+    /* Without TLB */
+    eatWithoutTLB = 2 * memoryTime;
+
+    /* With TLB */
+    eatWithTLB =
+        hitRatio * (tlbTime + memoryTime)
+        +
+        missRatio * (tlbTime + 2 * memoryTime);
+
+    printf("\n--- TLB Performance ---\n");
+
+    printf("TLB Access Time       : %.2f ns\n", tlbTime);
+    printf("Memory Access Time    : %.2f ns\n", memoryTime);
+    printf("TLB Hit Ratio         : %.2f\n", hitRatio);
+
+    printf("\nEffective Access Time WITHOUT TLB: %.2f ns\n",
+           eatWithoutTLB);
+
+    printf("Effective Access Time WITH TLB   : %.2f ns\n",
+           eatWithTLB);
+
+    if (eatWithTLB < eatWithoutTLB)
+    {
+        printf("\nTLB improves memory access time.\n");
+    }
+
+    return 0;
+}
