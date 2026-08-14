@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+int main()
+{
+    int base, limit, logical, physical;
+
+    printf("Enter Base Register value: ");
+    scanf("%d", &base);
+
+    printf("Enter Limit Register value: ");
+    scanf("%d", &limit);
+
+    printf("Enter Logical Address: ");
+    scanf("%d", &logical);
+
+    if (logical >= 0 && logical < limit)
+    {
+        physical = base + logical;
+
+        printf("\nAddress is VALID.\n");
+        printf("Logical Address  : %d\n", logical);
+        printf("Physical Address : %d\n", physical);
+    }
+    else
+    {
+        printf("\nAddress is INVALID.\n");
+        printf("Logical address exceeds the limit.\n");
+    }
+
+    return 0;
+}
