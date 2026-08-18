@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_USERS 10
+#define MAX_FILES 20
+
+struct User {
+    char username[30];
+    char files[MAX_FILES][30];
+    int fileCount;
+};
+
+struct User users[MAX_USERS];
+int userCount = 0;
+
+void createUser()
+{
+    char name[30];
+
+    printf("Enter username: ");
+    scanf("%s", name);
+
+    for (int i = 0; i < userCount; i++)
+    {
+        if (strcmp(users[i].username, name) == 0)
+        {
+            printf("User already exists!\n");
+            return;
+        }
+    }
+
+    strcpy(users[userCount].username, name);
+    users[userCount].fileCount = 0;
+    userCount++;
+
+    printf("User created successfully.\n");
+}
+
+void createFile()
+{
+    char username[30], filename[30];
+
+    printf("Enter username: ");
+    scanf("%s", username);
+
+    for (int i = 0; i < userCount; i++)
+    {
+        if (strcmp(users[i].username, username) == 0)
+        {
+            printf("Enter file name: ");
+            scanf("%s", filename);
+
+            for (int j = 0; j < users[i].fileCount; j++)
+            {
+                if (strcmp(users[i].files[j], filename) == 0)
+                {
+                    printf("File already exists!\n");
+                    return;
+                }
+            }
+
+            strcpy(users[i].files[users[i].fileCount], filename);
+            users[i].fileCount++;
+
+            printf("File created successfully.\n");
+            return;
+        }
+    }
+
+    printf("User not found!\n");
+}
+
+void display()
+{
+    if (userCount == 0)
+    {
+        printf("No users found.\n");
+        return;
+    }
+
+    printf("\n--- TWO LEVEL DIRECTORY ---\n");
+
+    for (int i = 0; i < userCount; i++)
+    {
+        printf("\nUser: %s\n", users[i].username);
+
+        if (users[i].fileCount == 0)
+        {
+            printf("  No files\n");
+        }
+        else
+        {
+            for (int j = 0; j < users[i].fileCount; j++)
+            {
+                printf("  %d. %s\n",
+                       j + 1, users[i].files[j]);
+            }
+        }
+    }
+}
+
+int main()
+{
+    int choice;
+
+    while (1)
+    {
+        printf("\n--- MENU ---\n");
+        printf("1. Create User\n");
+        printf("2. Create File\n");
+        printf("3. Display Directory\n");
+        printf("4. Exit\n");
+
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+            case 1:
+                createUser();
+                break;
+
+            case 2:
+                createFile();
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                return 0;
+
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+}
