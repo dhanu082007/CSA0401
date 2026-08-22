@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+int main()
+{
+    char filename[] = "sample.txt";
+
+    // Create a file
+    FILE *fp = fopen(filename, "w");
+
+    if (fp == NULL)
+    {
+        printf("Error creating file.\n");
+        return 1;
+    }
+
+    fprintf(fp, "This is a sample file.\n");
+    fclose(fp);
+
+    printf("File created successfully.\n");
+
+    // Set permissions: rw-r--r--
+    if (chmod(filename, 0644) == 0)
+    {
+        printf("File permissions set to 644.\n");
+    }
+    else
+    {
+        printf("Error changing file permissions.\n");
+        return 1;
+    }
+
+    printf("\nFile Access Permissions:\n");
+    printf("Owner  : Read + Write\n");
+    printf("Group  : Read only\n");
+    printf("Others : Read only\n");
+
+    printf("\nUser Types in Linux:\n");
+    printf("1. Owner (User)\n");
+    printf("2. Group\n");
+    printf("3. Others\n");
+
+    return 0;
+}
