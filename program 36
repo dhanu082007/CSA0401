@@ -1,0 +1,65 @@
+#include <stdio.h>
+
+#define MAX 50
+
+struct Block
+{
+    int blockNumber;
+    int next;
+};
+
+int main()
+{
+    struct Block blocks[MAX];
+    int n, i;
+    int firstBlock, lastBlock;
+    int current;
+
+    printf("Enter the number of blocks in the file: ");
+    scanf("%d", &n);
+
+    printf("\nEnter the block numbers:\n");
+
+    for (i = 0; i < n; i++)
+    {
+        printf("Block %d: ", i + 1);
+        scanf("%d", &blocks[i].blockNumber);
+    }
+
+    // Link the blocks
+    for (i = 0; i < n - 1; i++)
+    {
+        blocks[i].next = i + 1;
+    }
+
+    // Last block points to -1
+    blocks[n - 1].next = -1;
+
+    // Directory contains first and last block
+    firstBlock = 0;
+    lastBlock = n - 1;
+
+    printf("\n--- Directory Information ---\n");
+    printf("First Block : %d\n", blocks[firstBlock].blockNumber);
+    printf("Last Block  : %d\n", blocks[lastBlock].blockNumber);
+
+    printf("\n--- Linked Allocation ---\n");
+
+    current = firstBlock;
+
+    while (current != -1)
+    {
+        printf("Block %d", blocks[current].blockNumber);
+
+        if (blocks[current].next != -1)
+        {
+            printf(" -> ");
+        }
+
+        current = blocks[current].next;
+    }
+
+    printf(" -> NULL\n");
+
+    return 0;
+}
