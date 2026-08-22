@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    int request[50];
+    int n, head, diskSize, direction;
+    int i, j, temp;
+    int totalHeadMovement = 0;
+    int current;
+
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+
+    printf("Enter the disk request queue:\n");
+    for (i = 0; i < n; i++)
+    {
+        scanf("%d", &request[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter the disk size: ");
+    scanf("%d", &diskSize);
+
+    printf("Enter the direction (1 for right, 0 for left): ");
+    scanf("%d", &direction);
+
+    // Sort the request queue
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = 0; j < n - i - 1; j++)
+        {
+            if (request[j] > request[j + 1])
+            {
+                temp = request[j];
+                request[j] = request[j + 1];
+                request[j + 1] = temp;
+            }
+        }
+    }
+
+    current = head;
+
+    printf("\nSCAN Disk Scheduling Sequence:\n");
+    printf("%d", head);
+
+    if (direction == 1)
+    {
+        // Move towards higher cylinder numbers
+
+        for (i = 0; i < n; i++)
+        {
+            if (request[i] >= head)
+            {
+                totalHeadMovement += abs(current - request[i]);
+                current = request[i];
+
+                printf(" -> %d", current);
+            }
+        }
+
+        // Move to the end of the disk
+        if (current != diskSize - 1)
+        {
+            totalHeadMovement += abs(current - (diskSize - 1));
+            current = diskSize - 1;
+
+            printf(" -> %d", current);
+        }
+
+        // Reverse direction
+        for (i = n - 1; i >= 0; i--)
+        {
+            if (request[i] < head)
+            {
+                totalHeadMovement += abs(current - request[i]);
+                current = request[i];
+
+                printf(" -> %d", current);
+            }
+        }
+    }
+    else
+    {
+        // Move towards lower cylinder numbers
+
+        for (i = n - 1; i >= 0; i--)
+        {
+            if (request[i] <= head)
+            {
+                totalHeadMovement += abs(current - request[i]);
+                current = request[i];
+
+                printf(" -> %d", current);
+            }
+        }
+
+        // Move to the beginning of the disk
+        if (current != 0)
+        {
+            totalHeadMovement += current;
+            current = 0;
+
+            printf(" -> %d", current);
+        }
+
+        // Reverse direction
+        for (i = 0; i < n; i++)
+        {
+            if (request[i] > head)
+            {
+                totalHeadMovement += abs(current - request[i]);
+                current = request[i];
+
+                printf(" -> %d", current);
+            }
+        }
+    }
+
+    printf("\n\nTotal Head Movement = %d cylinders\n",
+           totalHeadMovement);
+
+    printf("Average Head Movement = %.2f cylinders\n",
+           (float)totalHeadMovement / n);
+
+    return 0;
+}
