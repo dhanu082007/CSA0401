@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+void fcfs(int request[], int n, int head)
+{
+    int i, movement = 0, current = head;
+
+    printf("\nFCFS Seek Sequence: %d", head);
+
+    for (i = 0; i < n; i++)
+    {
+        movement += abs(current - request[i]);
+        current = request[i];
+        printf(" -> %d", current);
+    }
+
+    printf("\nTotal Seek Time = %d\n", movement);
+}
+
+void sstf(int request[], int n, int head)
+{
+    int visited[MAX] = {0};
+    int i, count, min, index;
+    int movement = 0, current = head;
+
+    printf("\nSSTF Seek Sequence: %d", head);
+
+    for (count = 0; count < n; count++)
+    {
+        min = 99999;
+        index = -1;
+
+        for (i = 0; i < n; i++)
+        {
+            if (!visited[i] && abs(current - request[i]) < min)
+            {
+                min = abs(current - request[i]);
+                index = i;
+            }
+        }
+
+        visited[index] = 1;
+        movement += abs(current - request[index]);
+        current = request[index];
+
+        printf(" -> %d", current);
+    }
+
+    printf("\nTotal Seek Time = %d\n", movement);
+}
+
+void scan(int request[], int n, int head, int diskSize)
+{
+    int temp[MAX], i, j, t;
+    int movement = 0, current = head;
+
+    for (i = 0; i < n; i++)
+        temp[i] = request[i];
+
+    /* Sort */
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = i + 1; j < n; j++)
+        {
+            if (temp[i] > temp[j])
+            {
+                t = temp[i];
+                temp[i] = temp[j];
+                temp[j] = t;
+            }
+        }
+    }
+
+    printf("\nSCAN Seek Sequence: %d", head);
+
+    /* Move right */
+    for (i = 0; i < n; i++)
+    {
+        if (temp[i] >= head)
+        {
+            movement += abs(current - temp[i]);
+            current = temp[i];
+            printf(" -> %d", current);
+        }
+    }
+
+    /* Move to end */
+    movement += abs(current - (diskSize - 1));
+    current = diskSize - 1;
+    printf(" -> %d", current);
+
+    /* Reverse direction */
+    for (i = n - 1; i >= 0; i--)
+    {
+        if (temp[i] < head)
+        {
+            movement += abs(current - temp[i]);
+            current = temp[i];
+            printf(" -> %d", current);
+        }
+    }
+
+    printf("\nTotal Seek Time = %d\n", movement);
+}
+
+int main()
+{
+    int request[MAX];
+    int n, head, diskSize;
+    int i;
+
+    printf("Enter number of disk requests: ");
+    scanf("%d", &n);
+
+    printf("Enter request queue:\n");
+
+    for (i = 0; i < n; i++)
+        scanf("%d", &request[i]);
+
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter disk size: ");
+    scanf("%d", &diskSize);
+
+    fcfs(request, n, head);
+    sstf(request, n, head);
+    scan(request, n, head, diskSize);
+
+    return 0;
+}
