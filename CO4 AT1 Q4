@@ -1,0 +1,211 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+void sort(int a[], int n)
+{
+    int i, j, temp;
+
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = i + 1; j < n; j++)
+        {
+            if (a[i] > a[j])
+            {
+                temp = a[i];
+                a[i] = a[j];
+                a[j] = temp;
+            }
+        }
+    }
+}
+
+int cscan(int request[], int n, int head, int diskSize, char direction)
+{
+    int a[MAX];
+    int i, movement = 0, current = head;
+
+    for (i = 0; i < n; i++)
+        a[i] = request[i];
+
+    sort(a, n);
+
+    printf("\nC-SCAN Seek Sequence: %d", head);
+
+    if (direction == 'R' || direction == 'r')
+    {
+        /* Move right */
+        for (i = 0; i < n; i++)
+        {
+            if (a[i] >= head)
+            {
+                movement += abs(current - a[i]);
+                current = a[i];
+                printf(" -> %d", current);
+            }
+        }
+
+        /* Go to end */
+        movement += (diskSize - 1 - current);
+        current = diskSize - 1;
+        printf(" -> %d", current);
+
+        /* Jump to beginning */
+        movement += diskSize - 1;
+        current = 0;
+        printf(" -> %d", current);
+
+        /* Service remaining requests */
+        for (i = 0; i < n; i++)
+        {
+            if (a[i] < head)
+            {
+                movement += abs(current - a[i]);
+                current = a[i];
+                printf(" -> %d", current);
+            }
+        }
+    }
+    else
+    {
+        /* Move left */
+        for (i = n - 1; i >= 0; i--)
+        {
+            if (a[i] <= head)
+            {
+                movement += abs(current - a[i]);
+                current = a[i];
+                printf(" -> %d", current);
+            }
+        }
+
+        /* Go to beginning */
+        movement += current;
+        current = 0;
+        printf(" -> %d", current);
+
+        /* Jump to end */
+        movement += diskSize - 1;
+        current = diskSize - 1;
+        printf(" -> %d", current);
+
+        /* Service remaining requests */
+        for (i = n - 1; i >= 0; i--)
+        {
+            if (a[i] > head)
+            {
+                movement += abs(current - a[i]);
+                current = a[i];
+                printf(" -> %d", current);
+            }
+        }
+    }
+
+    printf("\nTotal Head Movement = %d\n", movement);
+
+    return movement;
+}
+
+int look(int request[], int n, int head, char direction)
+{
+    int a[MAX];
+    int i, movement = 0, current = head;
+
+    for (i = 0; i < n; i++)
+        a[i] = request[i];
+
+    sort(a, n);
+
+    printf("\nLOOK Seek Sequence: %d", head);
+
+    if (direction == 'R' || direction == 'r')
+    {
+        for (i = 0; i < n; i++)
+        {
+            if (a[i] >= head)
+            {
+                movement += abs(current - a[i]);
+                current = a[i];
+                printf(" -> %d", current);
+            }
+        }
+
+        for (i = n - 1; i >= 0; i--)
+        {
+            if (a[i] < head)
+            {
+                movement += abs(current - a[i]);
+                current = a[i];
+                printf(" -> %d", current);
+            }
+        }
+    }
+    else
+    {
+        for (i = n - 1; i >= 0; i--)
+        {
+            if (a[i] <= head)
+            {
+                movement += abs(current - a[i]);
+                current = a[i];
+                printf(" -> %d", current);
+            }
+        }
+
+        for (i = 0; i < n; i++)
+        {
+            if (a[i] > head)
+            {
+                movement += abs(current - a[i]);
+                current = a[i];
+                printf(" -> %d", current);
+            }
+        }
+    }
+
+    printf("\nTotal Head Movement = %d\n", movement);
+
+    return movement;
+}
+
+int main()
+{
+    int request[MAX];
+    int n, head, diskSize;
+    int cscanMovement, lookMovement;
+    char direction;
+    int i;
+
+    printf("Enter number of disk requests: ");
+    scanf("%d", &n);
+
+    printf("Enter request queue:\n");
+
+    for (i = 0; i < n; i++)
+        scanf("%d", &request[i]);
+
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter disk size: ");
+    scanf("%d", &diskSize);
+
+    printf("Enter direction (L/R): ");
+    scanf(" %c", &direction);
+
+    cscanMovement = cscan(request, n, head, diskSize, direction);
+
+    lookMovement = look(request, n, head, direction);
+
+    printf("\n--- Comparison ---\n");
+
+    if (cscanMovement < lookMovement)
+        printf("C-SCAN performs better.\n");
+    else if (lookMovement < cscanMovement)
+        printf("LOOK performs better.\n");
+    else
+        printf("Both algorithms have equal performance.\n");
+
+    return 0;
+}
